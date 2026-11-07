@@ -9,35 +9,43 @@
   <link rel="preload" as="image" href="images/flowers.webp">
   <link rel="stylesheet" href="style.css">
 </head>
-<body>
+<body class="is-locked">
 
   <!-- ============ ファーストビュー（3つのレイヤー） ============ -->
   <section class="hero" id="hero">
 
-    <!-- レイヤー1（いちばん下）: うす紫の台紙 -->
+    <!-- レイヤー1（いちばん下）: 白い台紙 -->
     <div class="layer layer-base"></div>
 
-    <!-- レイヤー2（まんなか）: 花イラスト＋トレーシングペーパー。これがめくれる -->
-    <button class="layer layer-flower" id="flowerSheet" type="button" aria-label="花のイラストをめくる">
+    <!-- レイヤー2: 花イラスト＋トレーシングペーパー（表側）。これがめくれる -->
+    <div class="layer layer-flower" id="sheet" role="button" tabindex="0" aria-label="花のイラストをめくる">
       <span class="flower-img"></span>
       <span class="tracing-paper"></span>
-      <span class="corner"></span>
-    </button>
+    </div>
 
-    <!-- レイヤー3（いちばん上）: 名前のロゴ。ずっと同じ位置に固定 -->
+    <!-- レイヤー3: 名前のロゴ。ずっと同じ位置に固定 -->
     <h1 class="layer layer-logo">
       <img src="images/logo.png" alt="KASUMI MIYAGI HAIR MAKE">
     </h1>
 
+    <!-- めくれた部分（紙の裏側）。JavaScriptで形と位置を毎フレーム計算しています -->
+    <div class="layer flap-wrap" aria-hidden="true">
+      <div class="flap" id="flap">
+        <span class="flower-img"></span>
+        <span class="paper-back"></span>
+        <span class="shade" id="shade"></span>
+      </div>
+    </div>
+
     <!-- 「タップしてね」のヒント -->
-    <p class="hint" id="hint">TAP</p>
+    <p class="hint">TAP</p>
 
     <!-- めくった後に花を戻すボタン -->
     <button class="reset" id="resetBtn" type="button" aria-label="花のイラストを戻す">✿</button>
   </section>
 
   <!-- ============ めくった後に見えるコンテンツ（仮の内容です） ============ -->
-  <main class="content" id="content">
+  <main class="content">
     <section class="block">
       <h2>PROFILE</h2>
       <p>ここにプロフィール文が入ります。<br>ここにプロフィール文が入ります。</p>

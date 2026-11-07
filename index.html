@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>KASUMI MIYAGI | HAIR &amp; MAKE</title>
+  <meta name="description" content="ヘアメイク KASUMI MIYAGI のウェブサイト">
+  <!-- 花の画像を先に読み込んでおく（表示がガタつかないように） -->
+  <link rel="preload" as="image" href="images/flowers.webp">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- ============ ファーストビュー（3つのレイヤー） ============ -->
+  <section class="hero" id="hero">
+
+    <!-- レイヤー1（いちばん下）: うす紫の台紙 -->
+    <div class="layer layer-base"></div>
+
+    <!-- レイヤー2（まんなか）: 花イラスト＋トレーシングペーパー。これがめくれる -->
+    <button class="layer layer-flower" id="flowerSheet" type="button" aria-label="花のイラストをめくる">
+      <span class="flower-img"></span>
+      <span class="tracing-paper"></span>
+      <span class="corner"></span>
+    </button>
+
+    <!-- レイヤー3（いちばん上）: 名前のロゴ。ずっと同じ位置に固定 -->
+    <h1 class="layer layer-logo">
+      <img src="images/logo.png" alt="KASUMI MIYAGI HAIR MAKE">
+    </h1>
+
+    <!-- 「タップしてね」のヒント -->
+    <p class="hint" id="hint">TAP</p>
+
+    <!-- めくった後に花を戻すボタン -->
+    <button class="reset" id="resetBtn" type="button" aria-label="花のイラストを戻す">✿</button>
+  </section>
+
+  <!-- ============ めくった後に見えるコンテンツ（仮の内容です） ============ -->
+  <main class="content" id="content">
+    <section class="block">
+      <h2>PROFILE</h2>
+      <p>ここにプロフィール文が入ります。<br>ここにプロフィール文が入ります。</p>
+    </section>
+
+    <section class="block">
+      <h2>CONTACT</h2>
+      <ul class="links">
+        <li><a href="#">Instagram</a></li>
+        <li><a href="mailto:info@example.com">Mail</a></li>
+      </ul>
+    </section>
+
+    <footer class="footer">© KASUMI MIYAGI</footer>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>

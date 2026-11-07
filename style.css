@@ -1,0 +1,242 @@
+/* =========================================================
+   色やスピードはここでまとめて変更できます
+   ========================================================= */
+:root {
+  --base-color: #d9d9e2;                     /* 台紙のうす紫 */
+  --paper-color: rgba(187, 187, 203, 0.56);  /* トレペのくもり具合（最後の数字を上げると花が薄くなる） */
+  --text-color: #1a1a1a;
+  --peel-time: 1.4s;                         /* めくれるスピード */
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html, body {
+  background: var(--base-color);
+  color: var(--text-color);
+  font-family: "Helvetica Neue", Arial, "Hiragino Sans", sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* めくる前はスクロールさせない */
+body.is-locked { overflow: hidden; }
+
+/* ---------------------------------------------------------
+   ファーストビュー（スマホの画面いっぱい）
+   --------------------------------------------------------- */
+.hero {
+  position: relative;
+  height: 100vh;
+  height: 100svh;       /* スマホのアドレスバーを考慮した高さ */
+  overflow: hidden;
+  perspective: 1600px;  /* めくれる時の奥行き感 */
+}
+
+/* すべてのレイヤーを同じ位置に重ねる */
+.layer {
+  position: absolute;
+  inset: 0;
+}
+
+/* --- レイヤー1: 台紙 --- */
+.layer-base {
+  background: var(--base-color);
+  z-index: 1;
+}
+
+/* --- レイヤー2: 花＋トレペ（めくれる紙） --- */
+.layer-flower {
+  z-index: 2;
+  border: none;
+  padding: 0;
+  background: #fff;
+  cursor: pointer;
+  transform-origin: 0% 0%;   /* 左上を支点にめくれる */
+  will-change: transform;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.flower-img,
+.tracing-paper {
+  position: absolute;
+  inset: 0;
+}
+
+.flower-img {
+  background: url("images/flowers.webp") center / cover no-repeat;
+}
+
+.tracing-paper {
+  background: var(--paper-color);
+}
+
+/* 右下の「めくれかけ」の角 */
+.corner {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 56px;
+  height: 56px;
+  background: linear-gradient(315deg, var(--base-color) 50%, rgba(255,255,255,.9) 50%, #ececf2 100%);
+  box-shadow: -3px -3px 8px rgba(80, 80, 110, .15);
+  animation: corner-wiggle 2.8s ease-in-out infinite;
+}
+
+@keyframes corner-wiggle {
+  0%, 70%, 100% { width: 56px; height: 56px; }
+  80%           { width: 74px; height: 74px; }
+}
+
+/* めくれた状態 */
+.is-open .layer-flower {
+  animation: peel var(--peel-time) cubic-bezier(.55, .05, .3, 1) forwards;
+  pointer-events: none;
+}
+
+.is-open .corner { animation: none; }
+
+@keyframes peel {
+  0% {
+    transform: translate(0, 0) rotate(0) rotateX(0);
+    box-shadow: 0 0 0 rgba(60, 60, 90, 0);
+  }
+  25% {
+    transform: translate(1%, -2%) rotate(-2deg) rotateX(8deg);
+    box-shadow: 0 30px 60px rgba(60, 60, 90, .25);
+  }
+  100% {
+    transform: translate(-20%, -115%) rotate(-12deg) rotateX(35deg);
+    box-shadow: 0 30px 60px rgba(60, 60, 90, 0);
+  }
+}
+
+/* 戻すとき */
+.is-closing .layer-flower {
+  animation: peel var(--peel-time) cubic-bezier(.55, .05, .3, 1) reverse both;
+}
+
+/* --- レイヤー3: ロゴ（いちばん上・動かない） --- */
+.layer-logo {
+  z-index: 3;
+  inset: auto;
+  top: 15%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(48vw, 360px);
+  pointer-events: none;   /* ロゴの上をタップしても紙がめくれるように */
+}
+
+.layer-logo img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* --- TAP のヒント --- */
+.hint {
+  position: absolute;
+  z-index: 3;
+  bottom: 7%;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 11px;
+  letter-spacing: .4em;
+  color: rgba(26, 26, 26, .6);
+  pointer-events: none;
+  animation: blink 2.4s ease-in-out infinite;
+  transition: opacity .4s;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: .25; }
+  50%      { opacity: 1; }
+}
+
+.is-open .hint { animation: none; opacity: 0; }
+
+/* --- 花を戻すボタン --- */
+.reset {
+  position: absolute;
+  z-index: 3;
+  bottom: 6%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 44px;
+  height: 44px;
+  border: 1px solid rgba(26, 26, 26, .25);
+  border-radius: 50%;
+  background: transparent;
+  color: #6f74a8;
+  font-size: 18px;
+  cursor: pointer;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .6s;
+}
+
+.is-open .reset {
+  opacity: 1;
+  pointer-events: auto;
+  transition-delay: calc(var(--peel-time) * .8);
+}
+
+/* ---------------------------------------------------------
+   めくった後のコンテンツ
+   --------------------------------------------------------- */
+.content {
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 64px 24px 40px;
+  text-align: center;
+}
+
+.block { margin-bottom: 64px; }
+
+.block h2 {
+  font-size: 13px;
+  font-weight: 400;
+  letter-spacing: .35em;
+  margin-bottom: 20px;
+}
+
+.block p {
+  font-size: 13px;
+  line-height: 2;
+}
+
+.links { list-style: none; }
+.links li { margin-bottom: 12px; }
+.links a {
+  color: var(--text-color);
+  font-size: 13px;
+  letter-spacing: .2em;
+  text-decoration: none;
+  border-bottom: 1px solid rgba(26, 26, 26, .3);
+  padding-bottom: 2px;
+}
+
+.footer {
+  font-size: 10px;
+  letter-spacing: .2em;
+  opacity: .5;
+}
+
+/* ---------------------------------------------------------
+   PC で見たとき: 名刺のような縦長カードを中央に表示
+   --------------------------------------------------------- */
+@media (min-width: 768px) {
+  .hero {
+    height: min(92vh, 1000px);
+    aspect-ratio: 3003 / 4183;   /* 元のイラストと同じ比率 */
+    margin: 4vh auto 0;
+    overflow: visible;
+  }
+  .layer-logo { width: 52%; }
+}
+
+/* 動きを減らす設定の人には、ふわっと消えるだけにする */
+@media (prefers-reduced-motion: reduce) {
+  .is-open .layer-flower,
+  .is-closing .layer-flower { animation: none; transition: opacity .6s; }
+  .is-open .layer-flower { opacity: 0; }
+  .corner, .hint { animation: none; }
+}
